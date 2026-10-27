@@ -1,0 +1,22 @@
+﻿# Ambientes virtuais e Python
+__pycache__/
+*.py[cod]
+*.class
+.venv/
+venv/
+env/
+
+# Dados pesados e arquivos temporários do PaySim
+data/*
+!data/.gitkeep
+*.csv
+*.parquet
+*.zip
+
+# IDEs e configurações de sistema
+.vscode/
+.spyderproject
+.spyproject
+*.swp
+.DS_Store
+Thumbs.db
