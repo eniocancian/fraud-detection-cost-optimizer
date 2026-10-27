@@ -49,10 +49,53 @@ fraud-detection-cost-optimizer/
 ├── figures/                   # Gráficos da curva de custo e relevância de variáveis
 │   ├── curva_custo_otimizada.png
 │   └── feature_importance_gain.png
+├── models/                    # Artefato serializado do modelo treinado
+│   └── modelo_xgboost_antifraude.joblib
 ├── notebooks/                 # Notebooks e experimentos exploratórios
 ├── src/
 │   ├── __init__.py
-│   └── pipeline_antifraude.py # Script modularizado de pré-processamento, treino e métricas
+│   ├── api.py                 # Microsserviço de inferência REST em tempo real (FastAPI)
+│   ├── app_dashboard.py       # Painel analítico de sensibilidade e predição (Streamlit)
+│   └── pipeline_antifraude.py # Script de pré-processamento, treino e métricas financeiras
 ├── .gitignore                 # Arquivo de exclusão de artefatos pesados e temporários
 ├── README.md                  # Documentação executiva e técnica do projeto
 └── requirements.txt           # Bibliotecas e dependências do ambiente
+```
+
+---
+
+## 🚀 Como Executar
+
+### 1. Instalar as dependências do ambiente
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Executar o Treino e Avaliação do Modelo
+Certifique-se de que o arquivo `paysim.csv` esteja dentro da pasta `data/`:
+```bash
+python src/pipeline_antifraude.py --data_path data/paysim.csv --custo_fp 50.0
+```
+
+### 3. Executar a API de Inferência em Tempo Real (FastAPI)
+Para iniciar o microsserviço de pontuação de transações:
+```bash
+python -m uvicorn src.api:app --reload --port 8000
+```
+* **Documentação Swagger UI:** Acesse `http://localhost:8000/docs` para interagir com os endpoints e simular chamadas HTTP em tempo real.
+
+### 4. Executar o Dashboard de Gestão de Risco (Streamlit)
+Para iniciar a interface web com simulador de custos operacionais e teste individual:
+```bash
+python -m streamlit run src/app_dashboard.py
+```
+* **Aplicação Web:** O painel será aberto automaticamente no navegador no endereço `http://localhost:8501`.
+
+---
+
+## ⚖️ Métrica Financeira de Decisão
+Em problemas com desbalanceamento severo, métricas puramente estatísticas (como Acurácia ou ROC-AUC) falham em capturar o risco assimétrico de negócio. A função objetivo implementada prioriza o **Prejuízo Consolidado**:
+
+$$\text{Prejuízo Total} = (\text{Qtd FP} \times \text{Custo Unitário de Atrito}) + \sum_{i \in \text{FN}} \text{Valor da Fraude}_i$$
+
+Onde cada alarme falso é orçado em **R$ 50,00** (custo de canais e suporte), e cada fraude perdida custa o **valor integral da transação não bloqueada**.
