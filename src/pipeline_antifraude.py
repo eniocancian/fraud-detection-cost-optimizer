@@ -216,3 +216,40 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+    # Gráfico 1: Curva de custo
+plt.figure(figsize=(10, 6))
+plt.plot(
+    df_varredura_xgb['Limiar'], 
+    df_varredura_xgb['Prejuízo Financeiro Total (R$)'] / 1e3, 
+    color='teal', 
+    lw=2.5, 
+    label='Prejuízo Total Consolidado (XGBoost)'
+)
+plt.scatter([limiar_otimo_xgb], [menor_prejuizo_xgb / 1e3], color='red', s=80, zorder=5)
+plt.axvline(
+    x=limiar_otimo_xgb, 
+    color='firebrick', 
+    linestyle='--', 
+    lw=1.5,
+    label=f'Ponto Ótimo: Limiar {limiar_otimo_xgb:.2f} (R$ {menor_prejuizo_xgb:,.2f})'
+)
+plt.xlabel('Limiar de Probabilidade de Fraude', fontsize=11)
+plt.ylabel('Prejuízo Total Estimado (Milhares de R$)', fontsize=11)
+plt.title('Otimização de Limiar Baseada em Custo Financeiro Real (XGBoost)', fontsize=13)
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend(fontsize=11)
+plt.tight_layout()
+plt.savefig(r"C:\Users\sueli\fraud-detection-cost-optimizer\figures\curva_custo_otimizada.png", dpi=300)
+plt.close()
+
+# Gráfico 2: Feature Importance
+plt.figure(figsize=(10, 5))
+plt.barh(df_importancias['Feature'], df_importancias['Ganho'], color='teal', edgecolor='black', alpha=0.8)
+plt.xlabel('Importância Média por Ganho (Gain)', fontsize=11)
+plt.ylabel('Features', fontsize=11)
+plt.title('Importância das Variáveis no XGBoost (Métrica de Ganho)', fontsize=13)
+plt.grid(axis='x', linestyle='--', alpha=0.6)
+plt.tight_layout()
+plt.savefig(r"C:\Users\sueli\fraud-detection-cost-optimizer\figures\feature_importance_gain.png", dpi=300)
+plt.close()
